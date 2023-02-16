@@ -26,7 +26,6 @@ async function main() {
             }
         })
 
-    await dbClient.db('firstOfMany').collection('tickets').createIndex({assignedTo: "text"}, {ticketName: "text"}, {ticketPriority: 'text'})
     console.log("Successfully Created Collection")
 }
 

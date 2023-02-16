@@ -6,17 +6,18 @@ const router = Router()
 
 router.post('/add', async (req, res) => {
     const { ticketName, ticketPriority, assignedTo } = req.body
+    console.log("I am req body", req.body)
     if (!ticketName || !ticketPriority || !assignedTo) {
         res.status(400).send({ message: "Key parameters missing, try again" })
     }
     await dbClient.db("firstOfMany").collection("tickets").insertOne({
         ticketName: ticketName,
-        ticketPriority: ticketPriority,
+        ticketPriority: parseInt(ticketPriority),
         assignedTo: assignedTo
     })
     res.status(200).send("Successfully added")
-})
-
+}) 
+ 
 router.get('/get', async (req, res) => {
     const cursor = dbClient.db("firstOfMany").collection("tickets").find()
     const tickets = await cursor.toArray()
