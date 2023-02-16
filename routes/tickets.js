@@ -13,7 +13,8 @@ router.post('/add', async (req, res) => {
     await dbClient.db("firstOfMany").collection("tickets").insertOne({
         ticketName: ticketName,
         ticketPriority: parseInt(ticketPriority),
-        assignedTo: assignedTo
+        assignedTo: assignedTo,
+        createdAt: new Date().toISOString()
     })
     res.status(200).send("Successfully added")
 }) 
