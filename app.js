@@ -3,6 +3,7 @@ import express from 'express'
 import { wlf } from './utils/logger.js';
 import { TicketRouter } from './routes/tickets.js';
 import bodyParser from 'body-parser';
+import { TicketStatusRouter } from './routes/ticketStatus.js';
 
 const logger = (req, res, done) => {
     wlf.info(`${req.method} ${req.url}`)
@@ -22,6 +23,7 @@ app.use(function (req, res, next) {
     next();
 });
 app.use('/ticket', TicketRouter)
+app.use('/status', TicketStatusRouter)
 
 app.listen(PORT, (error) => {
     if (!error)

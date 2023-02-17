@@ -11,9 +11,8 @@ router.post('/add', async (req, res) => {
         res.status(400).send({ message: "Key parameters missing, try again" })
     }
     await dbClient.db("firstOfMany").collection("tickets").insertOne({
-        ticketName: ticketName,
+        ...req.body,
         ticketPriority: parseInt(ticketPriority),
-        assignedTo: assignedTo,
         createdAt: new Date().toISOString()
     })
     res.status(200).send("Successfully added")
@@ -39,7 +38,6 @@ router.get('/get', async (req, res) => {
 
 router.delete('/delete', async (req, res) => {
     const { id } = req.query
-    console.log(id)
     await dbClient.db("firstOfMany").collection("tickets").findOneAndDelete({
         _id: new ObjectId(id)
     })
