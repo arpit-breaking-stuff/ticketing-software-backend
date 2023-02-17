@@ -17,11 +17,21 @@ router.post('/add', async (req, res) => {
         createdAt: new Date().toISOString()
     })
     res.status(200).send("Successfully added")
-}) 
- 
+})
+
 router.get('/get', async (req, res) => {
-    const cursor = dbClient.db("firstOfMany").collection("tickets").find()
-    const tickets = await cursor.toArray()
+    let query = req.query ?? {}
+    let tickets;
+    if (Object.keys(query).length > 0) {
+        // TODO: Add a generalized format for queries, support 
+        if (!!query._id) {
+            query = { ...query, _id: new ObjectId(query?._id) }
+        }
+        tickets = await dbClient.db("firstOfMany").collection("tickets").findOne(query)
+    }
+    else {
+        tickets = await dbClient.db("firstOfMany").collection("tickets").find(query)?.toArray()
+    }
     res.status(200).send({
         tickets: tickets
     })
