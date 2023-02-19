@@ -7,29 +7,46 @@ const router = Router()
 router.post('/add', async (req, res) => {
     const { status } = req.body
     if (!status) {
-        res.status(400).send({ message: "Key parameters missing, try again" })
+        return res.status(400).send({ message: "Key parameters missing, try again" })
     }
 
     await dbClient.db("firstOfMany").collection("ticketStatus").insertOne({
         ticketStatus: status
     })
-    res.status(200).send("Successfully added")
+    return res.status(200).send("Successfully added")
 })
 
 router.get('/get', async (req, res) => {
     const status = await dbClient.db("firstOfMany").collection("ticketStatus").find().toArray()
-    res.status(200).send({
+    return res.status(200).send({
         ticketStatus: status
     })
 })
 
 router.delete('/delete', async (req, res) => {
-    const { statusName } = req.query
+    const { _id } = req.query
     await dbClient.db("firstOfMany").collection("ticketStatus").findOneAndDelete({
-        ticketStatus: statusName
+        _id: new ObjectId(_id)
     })
-    res.status(200).send("Successfully deleted")
+    await dbClient.db("firstOfMany").collection("tickets").deleteMany({
+        ticketStatus: _id
+    })
+    return res.status(200).send("Successfully deleted")
 })
 
+
+router.put('/update', async (req, res) => {
+    const { newName, statusId } = req.query
+    if (!newName || newName?.length === 0 || !statusId) {
+        return res.status(400).send("Update Failed due to incomplete request")
+    } 
+
+    await dbClient.db("firstOfMany").collection("ticketStatus").updateOne({ _id: new ObjectId(statusId) }, {
+        $set: {
+            ticketStatus: newName
+        }
+    })
+    return res.status(200).send("Successfully changed name")
+})
 
 export { router as TicketStatusRouter }
