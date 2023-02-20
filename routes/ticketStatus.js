@@ -1,12 +1,13 @@
 import { Router } from "express";
 import { ObjectId } from "mongodb";
 import dbClient from "../dbClient.js";
+import { isWhitespace } from "../utils/isWhitespace.js";
 
 const router = Router()
 
 router.post('/add', async (req, res) => {
     const { status } = req.body
-    if (!status) {
+    if (!status || isWhitespace(status)) {
         return res.status(400).send({ message: "Key parameters missing, try again" })
     }
 
